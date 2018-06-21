@@ -69,6 +69,7 @@ function _get_liked_tieba($cookie, $ignore_error = false){
 			);
 			$count++;
 		}
+		if ($pn >= 100) break;
 		if ($count==0) {
 			if ($retry >= 2) break;
 			$retry++;
