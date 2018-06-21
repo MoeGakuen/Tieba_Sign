@@ -80,7 +80,7 @@ class core {
 		if ($cron_next_run > $nowtime) return;
 		$cron = DB::fetch_first("SELECT * FROM cron WHERE nextrun<'{$nowtime}' ORDER BY `order` LIMIT 0,1");
 		define('CRON_ID', $cron['id']);
-		echo '[当前任务] ' . CRON_ID . PHP_EOL;
+		echo '[褰撳墠浠诲姟] ' . CRON_ID . PHP_EOL;
 		list($pluginid, $cronscript) = explode('/', CRON_ID, 2);
 		if($pluginid && $cronscript){
 			$script_path = ROOT."./plugins/{$pluginid}/{$cronscript}.cron.php";
