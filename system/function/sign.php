@@ -1,14 +1,17 @@
 <?php
 if(!defined('IN_KKFRAME')) exit();
 
-function _get_tbs($uid){
+function _get_tbs($uid, $cookie = ''){
 	static $tbs = array();
 	if($tbs[$uid]) return $tbs[$uid];
+	
+	$cookie = empty($cookie) ? get_cookie($uid) : $cookie;
+	
 	$tbs_url = 'http://tieba.baidu.com/dc/common/tbs';
 	$ch = curl_init($tbs_url);
 	curl_setopt($ch, CURLOPT_HTTPHEADER, array('User-Agent: Mozilla/5.0 (Linux; U; Android 4.1.2; zh-cn; MB526 Build/JZO54K) AppleWebKit/530.17 (KHTML, like Gecko) FlyFlow/2.4 Version/4.0 Mobile Safari/530.17 baidubrowser/042_1.8.4.2_diordna_458_084/alorotoM_61_2.1.4_625BM/1200a/39668C8F77034455D4DED02169F3F7C7%7C132773740707453/1','Referer: http://tieba.baidu.com/'));
 	curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-	curl_setopt($ch, CURLOPT_COOKIE, get_cookie($uid));
+	curl_setopt($ch, CURLOPT_COOKIE, $cookie);
 	$tbs_json = curl_exec($ch);
 	curl_close($ch);
 	$tbs = json_decode($tbs_json, 1);
@@ -39,8 +42,11 @@ function _get_baidu_userinfo($uid){
 	}
 }
 
-function _get_liked_tieba($cookie){
-	if (stripos($cookie,'PTOKEN') === FALSE) showmessage('缺少 PTOKEN 无法获取账号信息，请通过 API 重新绑定！', './#guide');
+function _get_liked_tieba($cookie, $ignore_error = false){
+	if (stripos($cookie,'PTOKEN') === FALSE) {
+		if($ignore_error) return;
+		showmessage('缺少 PTOKEN 无法获取账号信息，请通过 API 重新绑定！', './#guide');
+	}
 	$pn = 0;
 	$kw_name = array();
 	$retry = 0;
@@ -81,7 +87,7 @@ function _update_liked_tieba($uid, $ignore_error = false, $allow_deletion = true
 		if($ignore_error) return;
 		showmessage('请先填写 Cookie 信息再更新', './#baidu_bind');
 	}
-	$liked_tieba = get_liked_tieba($cookie);
+	$liked_tieba = get_liked_tieba($cookie, $ignore_error);
 	$insert = $deleted = 0;
 	if(!$liked_tieba){
 		if($ignore_error) return;
@@ -138,6 +144,7 @@ function _client_sign($uid, $tieba){
 	preg_match('/BDUSS=([^ ;]+);/i', $cookie, $matches);
 	$BDUSS = trim($matches[1]);
 	if(!$BDUSS) return array(-1, '找不到 BDUSS Cookie', 0);
+
 	$ch = curl_init('http://c.tieba.baidu.com/c/c/forum/sign');
 	curl_setopt($ch, CURLOPT_HTTPHEADER, array('Content-Type: application/x-www-form-urlencoded', 'User-Agent: Mozilla/5.0 (SymbianOS/9.3; Series60/3.2 NokiaE72-1/021.021; Profile/MIDP-2.1 Configuration/CLDC-1.1 ) AppleWebKit/525 (KHTML, like Gecko) Version/3.0 BrowserNG/7.1.16352'));
 	curl_setopt($ch, CURLOPT_COOKIE, $cookie);
@@ -152,7 +159,7 @@ function _client_sign($uid, $tieba){
 		'fid' => $tieba['fid'],
 		'kw' => urldecode($tieba['unicode_name']),
 		'net_type' => '3',
-		'tbs' => get_tbs($uid),
+		'tbs' => get_tbs($uid, $cookie),
 	);
 	$sign_str = '';
 	foreach($array as $k=>$v) $sign_str .= $k.'='.$v;
@@ -190,6 +197,7 @@ function _client_sign_old($uid, $tieba){
 	preg_match('/BDUSS=([^ ;]+);/i', $cookie, $matches);
 	$BDUSS = trim($matches[1]);
 	if(!$BDUSS) return array(-1, '找不到 BDUSS Cookie', 0);
+
 	$ch = curl_init('http://c.tieba.baidu.com/c/c/forum/sign');
 	curl_setopt($ch, CURLOPT_HTTPHEADER, array('Content-Type: application/x-www-form-urlencoded', 'User-Agent: BaiduTieba for Android 5.1.3', 'client_user_token: '.random(6, true)));
 	curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
@@ -212,7 +220,7 @@ function _client_sign_old($uid, $tieba){
 		'stSize' => random(5, true),
 		'stTime' => random(4, true),
 		'stTimesNum' => '0',
-		'tbs' => get_tbs($uid),
+		'tbs' => get_tbs($uid, $cookie),
 		'timestamp' => time().rand(1000, 9999),
 	);
 	$sign_str = '';

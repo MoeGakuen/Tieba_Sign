@@ -388,9 +388,9 @@ function update_liked_tieba($uid, $ignore_error = false, $allow_deletion = true)
 	require_once SYSTEM_ROOT.'./function/sign.php';
 	return _update_liked_tieba($uid, $ignore_error, $allow_deletion);
 }
-function get_liked_tieba($cookie){
+function get_liked_tieba($cookie, $ignore_error = false){
 	require_once SYSTEM_ROOT.'./function/sign.php';
-	return _get_liked_tieba($cookie);
+	return _get_liked_tieba($cookie, $ignore_error);
 }
 function do_login($uid){
 	require_once SYSTEM_ROOT.'./function/member.php';
