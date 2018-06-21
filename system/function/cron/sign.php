@@ -8,10 +8,6 @@ $endtime = $multi_thread ? TIMESTAMP + 10 : TIMESTAMP + 45;
 if($nowtime - $today < 1800){
 	cron_set_nextrun($today + 1800);
 }elseif($count){
-	if($multi_thread){
-		$ret = MultiThread::registerThread(5, 10);
-		if($ret) MultiThread::newCronThread();
-	}
 	if(getSetting('next_cron') < TIMESTAMP - 3600) cron_set_nextrun(TIMESTAMP - 1);
 	while($endtime > time()){
 		if($count <= 0) break;
@@ -51,10 +47,6 @@ if($nowtime - $today < 1800){
 			sleep($time);
 			$count--;
 		}
-	}
-	if($multi_thread){
-		$ret = MultiThread::registerThread(5, 10);
-		if($ret) MultiThread::newCronThread();
 	}
 }else{
 	cron_set_nextrun($nowtime + 1800);
