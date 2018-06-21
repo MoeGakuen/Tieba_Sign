@@ -8,12 +8,12 @@ if(defined('SAE_ACCESSKEY')){
 	$word = getSetting('cron_pass');
 }
 if($pass != $word ){
-	echo date('Y-n-j G:i:s').'  no';
+	echo '[' . date('Y-n-j G:i:s') . '] [error]';
 	exit();
 }else{
 	// Fix for php without web server
 	define('SIGN_LOOP', true);
 	define('ENABLE_CRON', true);
 	// Do nothing
-	echo date('Y-n-j G:i:s').'  ok';
+	echo '[' . date('Y-n-j G:i:s').'] [info] ';
 }
