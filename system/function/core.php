@@ -218,9 +218,11 @@ function get_cookie($uid){
 	if($cookie[$uid]) return $cookie[$uid];
 	$cookie[$uid] = DB::result_first("SELECT cookie FROM member_setting WHERE uid='{$uid}'");
 	$cookie[$uid] = strrev(str_rot13(pack('H*', $cookie[$uid])));
+	if (substr(trim($cookie[$uid]), -1) != ';') $cookie[$uid] += ';';
 	return $cookie[$uid];
 }
 function save_cookie($uid, $cookie){
+	if (substr(trim($cookie), -1) != ';') $cookie += ';';
 	$cookie = bin2hex(str_rot13(strrev(addslashes($cookie))));
 	DB::query("UPDATE member_setting SET cookie='{$cookie}' WHERE uid='{$uid}'");
 }
