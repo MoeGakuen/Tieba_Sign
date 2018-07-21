@@ -1,7 +1,7 @@
 <?php
 if (!defined('IN_KKFRAME')) exit('Access Denied');
 
-class aliyunDirectMail extends mailer
+class DirectMail extends mailer
 {
     var $id = 'DirectMail';
     var $name = 'DirectMail';
