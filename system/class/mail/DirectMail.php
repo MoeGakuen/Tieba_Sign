@@ -5,7 +5,7 @@ class DirectMail extends mailer
 {
     var $id = 'DirectMail';
     var $name = 'DirectMail';
-    var $description = '通过阿里云邮件推送，无需 SMTP 支持 - Vrsion: v0.0.1';
+    var $description = '通过阿里云邮件推送，无需 SMTP 支持 - Vrsion: v1.0.0';
     var $config = array(
         array('Access Key', 'accessKey', '', 'yourAccessKey', ''),
         array('Access Secret', 'accessSecret', '', 'yourAccessSecret', ''),
