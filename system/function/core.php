@@ -234,9 +234,9 @@ function get_username($uid){
 }
 function get_setting($uid){
 	static $user_setting = array();
-	if($user_setting[$uid]) return $user_setting[$uid];
-	$cached_result = CACHE::get('user_setting_'.$uid);
-	if(!$cached_result){
+	if(!empty($user_setting[$uid])) return $user_setting[$uid];
+	$cached_result = CACHE::get('user_setting_' . $uid);
+	if(empty($cached_result)){
 		$cached_result = DB::fetch_first("SELECT * FROM member_setting WHERE uid='{$uid}'");
 		unset($cached_result['cookie']);
 		CACHE::save('user_setting_'.$uid, $cached_result);

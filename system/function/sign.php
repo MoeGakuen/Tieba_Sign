@@ -142,12 +142,13 @@ function _update_liked_tieba($uid, $ignore_error = false, $allow_deletion = true
 
 function _client_sign($uid, $tieba){
 	$cookie = get_cookie($uid);
+	if(empty($cookie)) return array(-1, '请更新 Cookie 信息', 0);
+
 	preg_match('/BDUSS=([^ ;]+);/i', $cookie, $matches);
-	$BDUSS = trim($matches[1]);
-	if(!$BDUSS) return array(-1, '找不到 BDUSS Cookie', 0);
+	if(empty($matches[1])) return array(-1, '找不到 BDUSS，请更新 Cookie 信息', 0);
 
 	$ch = curl_init('http://c.tieba.baidu.com/c/c/forum/sign');
-	curl_setopt($ch, CURLOPT_HTTPHEADER, array('Content-Type: application/x-www-form-urlencoded', 'User-Agent: Mozilla/5.0 (SymbianOS/9.3; Series60/3.2 NokiaE72-1/021.021; Profile/MIDP-2.1 Configuration/CLDC-1.1 ) AppleWebKit/525 (KHTML, like Gecko) Version/3.0 BrowserNG/7.1.16352'));
+	curl_setopt($ch, CURLOPT_HTTPHEADER, array('Content-Type: application/x-www-form-urlencoded', 'User-Agent: bdtb for Android 9.5.8.0'));
 	curl_setopt($ch, CURLOPT_COOKIE, $cookie);
 	curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
 	curl_setopt($ch, CURLOPT_POST, 1);
