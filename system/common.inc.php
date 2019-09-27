@@ -35,7 +35,7 @@ function class_loader($class_name){
 if (function_exists('spl_autoload_register')){
 	spl_autoload_register('class_loader');
 }else{
-	function __autoload($class_name){
+	function spl_autoload_register($class_name){
 		class_loader($class_name);
 	}
 }
