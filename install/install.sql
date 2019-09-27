@@ -1,5 +1,5 @@
 /*
- Install script for version 1.14.6.3
+ Install script for version 1.14.6.7
  */
 
 DROP TABLE IF EXISTS `cache`;
@@ -119,10 +119,4 @@ CREATE TABLE IF NOT EXISTS `sign_log` (
   `retry` tinyint(3) unsigned NOT NULL DEFAULT '0',
   UNIQUE KEY `tid` (`tid`,`date`),
   KEY `uid` (`uid`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8;
-
-CREATE TABLE IF NOT EXISTS `process` (
-  `id` varchar(16) NOT NULL,
-  `exptime` int(11) NOT NULL,
-  PRIMARY KEY (`id`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
