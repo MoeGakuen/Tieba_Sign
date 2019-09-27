@@ -65,7 +65,7 @@ switch($_GET['action']){
 			saveSetting('admin_uid', $_POST['admin_uid']);
 		}
 		saveSetting('random_sign', ($_POST['random_sign'] ? 1 : 0));
-		saveSetting('multi_thread', (getSetting('channel') == 'dev' && $_POST['multi_thread'] ? 1 : 0));
+		saveSetting('multi_thread', ($_POST['multi_thread'] ? 1 : 0));
 		saveSetting('account_switch', ($_POST['account_switch'] ? 1 : 0));
 		saveSetting('register_limit', ($_POST['register_limit'] ? 1 : 0));
 		saveSetting('register_check', ($_POST['register_check'] ? 1 : 0));
@@ -152,12 +152,6 @@ switch($_GET['action']){
 		}
 		echo json_encode($out);
 		break;
-	case 'switch_channel':
-		if($formhash != $_GET['formhash']) showmessage('来源不可信，请重试', 'admin.php#updater');
-		$channel = $_GET['channel'];
-		if($channel != 'dev' && $channel != 'stable') showmessage('未知分支ID', 'admin.php#updater');
-		saveSetting('channel', $channel);
-		showmessage('分支切换成功.', 'admin.php#updater#');
 	case 'use_default_api':
 		if($formhash != $_GET['formhash']) showmessage('来源不可信，请重试', 'admin.php#setting');
 		saveSetting('use_sae_api', false);

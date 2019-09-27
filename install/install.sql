@@ -1,5 +1,5 @@
 /*
- Install script for version 1.14.6.7
+ Install script for version 1.14.6.8
  */
 
 DROP TABLE IF EXISTS `cache`;

@@ -204,15 +204,6 @@ if(defined('AFENABLED')) echo '<a href="admin.php?action=clear_cron_cache&formha
 <br>
 <p>如果更新过程出现错误，您可以到 <a href="http://buildbot.ikk.me/#sign" target="_blank">http://buildbot.ikk.me/#sign</a> 下载最新完整包进行覆盖</p>
 <br>
-<?php
-if(getSetting('channel') == 'dev'){
-	echo '<p>当前分支：开发版 (<a id="switch_to_stable" href="javascript:;">切换到稳定版</a>)</p>';
-} else {
-	echo '<p>当前分支：稳定版 (<a id="switch_to_dev" href="javascript:;">切换到开发版</a>)</p>';
-}
-?>
-<p>开发版拥有更快的更新速度，但同时也拥有一定的不稳定性.</p>
-<br>
 <p class="result">正在检查更新...</p>
 <div class="filelist hidden">
 <ul></ul>

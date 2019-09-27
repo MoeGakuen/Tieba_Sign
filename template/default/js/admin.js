@@ -16,12 +16,6 @@ $(document).ready(function() {
 		$('#content-updater .result').html('正在更新系统文件，请耐心等待...');
 		updater_get_file();
 	});
-	$('#switch_to_dev').click(function(){
-		switch_channel('dev', '<p>确定要切换到开发版么？</p><p>开发版具有一定的不稳定性，且有可能无法切换回稳定版</p>');
-	});
-	$('#switch_to_stable').click(function(){
-		switch_channel('stable', '<p>确定要切换到稳定版么？</p><p>如果开发版版本号与稳定版不同，可能导致系统无法使用。<br>切换前请慎重考虑！</p>');
-	});
 	var copyright_time = 0, copyright_clicks = 1;
 	$('.copyright').click(function(){
 		console.log('You\'d clicked copyright text :D');
@@ -87,9 +81,6 @@ function load_user(){
 			$("#content-user table tbody").append("<tr><td>"+field.uid+"</td><td>"+field.username+"</td><td class=\"mobile_hidden\">"+field.email+"</td><td><a href=\"admin.php?action=update_liked_tieba&uid="+field.uid+"&formhash="+formhash+"\" onclick=\"return msg_win_action(this.href)\">"+(isMobile() ? '刷新' : '刷新喜欢的贴吧')+"</a> | <a href=\"javascript:;\" onclick=\"return deluser('"+field.uid+"')\">"+(isMobile() ? '删除' : '删除用户')+"</a></td></tr>");
 		});
 	}).fail(function() { createWindow().setTitle('系统错误').setContent('发生未知错误: 无法获取用户列表').addCloseButton('确定').append(); }).always(function(){ hideloading(); });
-}
-function switch_channel(channel, tips){
-	createWindow().setTitle('切换分支').setContent(tips).addButton('确定', function(){ msg_redirect_action("admin.php?action=switch_channel&channel="+channel+"&formhash="+formhash); }).addCloseButton('取消').append();
 }
 function updater_get_file(){
 	$.getJSON("admin.php?action=get_file", function(result){
