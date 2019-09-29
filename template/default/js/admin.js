@@ -166,7 +166,6 @@ function load_setting(){
 		$('#autoupdate').attr('checked', result.autoupdate == 1);
 		$('#block_register').attr('checked', result.block_register == 1);
 		$('#random_sign').attr('checked', result.random_sign == 1);
-		$('#multi_thread').attr('checked', result.multi_thread == 1);
 		$('#cron_pass').attr('value', result.cron_pass ? result.cron_pass : '');
 		$('#invite_code').attr('value', result.invite_code ? result.invite_code : '');
 		$('#beian_no').attr('value', result.beian_no ? result.beian_no : '');

@@ -6,7 +6,7 @@ $count = DB::result_first("SELECT COUNT(*) FROM `sign_log` WHERE `status` IN (0,
 if($nowtime - $today < 1800){
 	cron_set_nextrun($today + 1800);
 }elseif($count){
-	$endtime = getSetting('multi_thread') ? TIMESTAMP + 10 : TIMESTAMP + 45;
+	$endtime = TIMESTAMP + 45;
 	if(getSetting('next_cron') < TIMESTAMP - 3600) cron_set_nextrun(TIMESTAMP - 1);
 	while($endtime > time()){
 		if($count <= 0) break;
