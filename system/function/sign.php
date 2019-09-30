@@ -153,7 +153,7 @@ function _client_sign($uid, $tieba){
 	curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
 	curl_setopt($ch, CURLOPT_POST, 1);
 	$array = array(
-		'BDUSS' => $BDUSS,
+		'BDUSS' => $matches[1],
 		'_client_id' => '03-00-DA-59-05-00-72-96-06-00-01-00-04-00-4C-43-01-00-34-F4-02-00-BC-25-09-00-4E-36',
 		'_client_type' => '4',
 		'_client_version' => '1.2.1.17',
