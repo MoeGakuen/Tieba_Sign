@@ -42,7 +42,7 @@ class DirectMail extends mailer
             'http' => [
                 'method' => 'POST',
                 'header' => 'Content-type: application/x-www-form-urlencoded',
-                'content' => http_build_query(array_merge($data))
+                'content' => http_build_query($data)
             ]
         ]);
         return file_get_contents('http://dm.aliyuncs.com/', null, $content);
