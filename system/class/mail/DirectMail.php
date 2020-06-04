@@ -5,7 +5,7 @@ class DirectMail extends mailer
 {
     var $id = 'DirectMail';
     var $name = 'DirectMail';
-    var $description = '通过阿里云邮件推送，无需 SMTP 支持 - Vrsion: v1.0.0';
+    var $description = '通过阿里云邮件推送，无需 SMTP 支持 - Vrsion: v1.1.0';
     var $config = array(
         array('Access Key', 'accessKey', '', 'yourAccessKey', ''),
         array('Access Secret', 'accessSecret', '', 'yourAccessSecret', ''),
@@ -15,26 +15,37 @@ class DirectMail extends mailer
 
     function isAvailable()
     {
-        return function_exists('curl_init');
+        return true;
     }
 
-    function post($data)
+    function send($mail)
     {
-        $ch = curl_init();
-        curl_setopt($ch, CURLOPT_URL, 'http://dm.aliyuncs.com/');
-        curl_setopt($ch, CURLOPT_HEADER, 0);
-        curl_setopt($ch, CURLOPT_HTTPAUTH, CURLAUTH_BASIC);
-        curl_setopt($ch, CURLOPT_CUSTOMREQUEST, 'POST');
-        curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
-        curl_setopt($ch, CURLOPT_POSTFIELDS, http_build_query($data));
-        $result = curl_exec($ch);
-
-        if ($result === false) {
-            echo curl_error($ch);
-        }
-
-        curl_close($ch);
-        return $result;
+        $data = [
+            'Format' => 'json',
+            'Version' => '2015-11-23',
+            'AccessKeyId' => $this->_get_setting('accessKey'),
+            'SignatureMethod' => 'HMAC-SHA1',
+            'Timestamp' => gmdate('Y-m-d\TH:i:s\Z'),
+            'SignatureVersion' => '1.0',
+            'SignatureNonce' => md5(uniqid(mt_rand(), true)),
+            'Action' => 'SingleSendMail',
+            'AccountName' => $this->_get_setting('accountName'),
+            'ReplyToAddress' => 'true',
+            'AddressType' => 1,
+            'ToAddress' => $mail->address,
+            'FromAlias' => $this->_get_setting('alias'),
+            'Subject' => $mail->subject,
+            'HtmlBody' => $mail->message,
+        ];
+        $data["Signature"] = $this->computeSignature($data, $this->_get_setting('accessSecret'));
+        $content = stream_context_create([
+            'http' => [
+                'method' => 'POST',
+                'header' => 'Content-type: application/x-www-form-urlencoded',
+                'content' => http_build_query(array_merge($data))
+            ]
+        ]);
+        return file_get_contents('http://dm.aliyuncs.com/', null, $content);
     }
 
     function computeSignature($parameters, $accessKeySecret)
@@ -57,53 +68,6 @@ class DirectMail extends mailer
         $res = preg_replace('/\*/', '%2A', $res);
         $res = preg_replace('/%7E/', '~', $res);
         return $res;
-    }
-
-    function prepareValue($value)
-    {
-        if (is_bool($value)) {
-            if ($value) {
-                return "true";
-            } else {
-                return "false";
-            }
-        } else {
-            return $value;
-        }
-    }
-
-    function send($mail)
-    {
-        $AccessKeyId=$this->_get_setting('accessKey');
-        $accessSecret=$this->_get_setting('accessSecret');
-        $AccountName=$this->_get_setting('accountName');
-        $ToAddress= $mail->address;
-        $FromAlias= $this->_get_setting('alias');
-        $Subject= $mail->subject;
-        $HtmlBody= $mail->message;
-        $apiParams = array();
-        foreach ($apiParams as $key => $value) {
-            $apiParams[$key] = $this->prepareValue($value);
-        }
-        $apiParams["Format"] = 'json';
-        $apiParams["Version"] = '2015-11-23';
-        $apiParams["AccessKeyId"] = $AccessKeyId;
-        $apiParams["SignatureMethod"] = 'HMAC-SHA1';
-        $apiParams["Timestamp"] = gmdate('Y-m-d\TH:i:s\Z');
-        $apiParams["SignatureVersion"] = '1.0';
-        $apiParams["SignatureNonce"] = md5(uniqid(mt_rand(), true));
-        $apiParams["Action"] = 'SingleSendMail';
-        $apiParams["AccountName"] = $AccountName;
-        $apiParams["ReplyToAddress"] = 'true';
-        $apiParams["AddressType"] = 1;
-        $apiParams["ToAddress"] =$ToAddress;
-        $apiParams["FromAlias"] =$FromAlias ;
-        $apiParams["Subject"] =  $Subject;
-        $apiParams["HtmlBody"] = $HtmlBody;
-        $apiParams["Signature"] = $this->computeSignature($apiParams, $accessSecret);
-        $sendresult = json_decode($this -> post($apiParams), true);
-        if ($sendresult['err_no']==0) return true;
-        return false;
     }
 }
 
