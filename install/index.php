@@ -13,28 +13,22 @@ if (file_exists($config_file)) {
 
 // MySQLi Support
 if (!function_exists('mysql_connect') && function_exists('mysqli_connect')) {
-    function mysql_connect($server = 'localhost', $username = 'root', $password = '', $new_link = false, $client_flags = 0)
-    {
+    function mysql_connect($server = 'localhost', $username = 'root', $password = '', $new_link = false, $client_flags = 0) {
         return mysqli_connect($server, $username, $password, '');
     }
-    function mysql_insert_id($link = null)
-    {
+    function mysql_insert_id($link = null) {
         return mysqli_insert_id($link);
     }
-    function mysql_select_db($db_name, $link = null)
-    {
+    function mysql_select_db($db_name, $link = null) {
         return mysqli_select_db($link, $db_name);
     }
-    function mysql_query($db_name, $link = null)
-    {
+    function mysql_query($db_name, $link = null) {
         return mysqli_query($link, $db_name);
     }
-    function mysql_error($link = null)
-    {
+    function mysql_error($link = null) {
         return mysqli_error($link);
     }
-    function mysql_errno($link = null)
-    {
+    function mysql_errno($link = null) {
         return mysqli_errno($link);
     }
 }
@@ -42,10 +36,7 @@ if (!function_exists('mysql_connect') && function_exists('mysqli_connect')) {
 $step = isset($_GET['step']) ? $_GET['step'] : '';
 switch ($step) {
     default:
-        if (defined('SAE_ACCESSKEY')) {
-            header('Location: sae.php');
-            exit();
-        } elseif (getenv('OPENSHIFT_APP_NAME')) {
+        if (getenv('OPENSHIFT_APP_NAME')) {
             $extra_script = '<script type="text/javascript">if(confirm("要使用 OpenShift 一键安装向导吗？")) location.href="openshift.php";</script>';
         }
         $content = '<p>欢迎使用 贴吧签到助手 安装向导！</p>';
@@ -143,28 +134,24 @@ switch ($step) {
         show_install_page('安装成功', $content);
 }
 
-function show_back($title, $text)
-{
+function show_back($title, $text) {
     $content = '<p>' . $text . '</p>';
     $content .= '<br><p class="btns"><button onclick="history.back();">&laquo; 返回</button></p>';
     show_install_page($title, $content);
 }
 
-function show_install_page($title, $content)
-{
+function show_install_page($title, $content) {
     global $extra_script;
     $template = '<!DOCTYPE html><html><head><title>贴吧签到助手</title><meta http-equiv="Content-Type" content="text/html;charset=utf-8" /><meta name="HandheldFriendly" content="true" /><meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" /><meta name="author" content="kookxiang" /><meta name="copyright" content="KK\'s Laboratory" /><link rel="shortcut icon" href="../favicon.ico" /><meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" /><meta name="renderer" content="webkit"><link rel="stylesheet" href="../template/default/style/main.css" type="text/css" /><link rel="stylesheet" href="../template/default/style/custom.css" type="text/css" /><style type="text/css">.status.on, .status.off { padding: 2px 0 2px 20px; } .status.on { color: #22dd33; background: url(../template/default/style/done.gif) no-repeat 1px 50%; } .status.off { color: #ff3344; background: url(../template/default/style/error.gif) no-repeat 1px 50%; } .main-box { max-width: 550px; top: 135px; } .main-content { text-align: left; font-size: 13px; } .config span { width: 100px; text-align:right; display:block; float: left; height: 30px; line-height: 30px; margin-right: 15px; } </style></head><body><div id="append_parent"><div class="loading-icon"><img src="../template/default/style/loading.gif" /> 载入中...</div></div><div class="wrapper" id="page_index"><h1>贴吧签到助手 - 安装向导</h1><div class="sidebar"></div><div class="main-content"><h2>{title}</h2>{content}</div></div><script src="//lib.sinaapp.com/js/jquery/1.10.2/jquery-1.10.2.min.js"></script><script src="../template/default/js/fwin.js"></script><script type="text/javascript">hideloading();</script>' . $extra_script . '</body></html>';
     echo str_replace(array('{title}', '{content}'), array($title, $content), $template);
     exit();
 }
 
-function show_status($status, $on_txt = 'On', $off_txt = 'Off')
-{
+function show_status($status, $on_txt = 'On', $off_txt = 'Off') {
     return $status ? '<span class="status on">' . $on_txt . '</span>' : '<span class="status off">' . $off_txt . '</span>';
 }
 
-function runquery($sql, $link)
-{
+function runquery($sql, $link) {
     $sql = trim(str_replace("\r", "\n", $sql));
     foreach (explode(";\n", $sql) as $query) {
         $query = trim($query);
@@ -174,15 +161,13 @@ function runquery($sql, $link)
     }
 }
 
-function saveSetting($k, $v)
-{
+function saveSetting($k, $v) {
     global $link;
     $v = addslashes($v);
     mysql_query("REPLACE INTO setting SET v='{$v}', k='{$k}'", $link);
 }
 
-function random($length, $numeric = 0)
-{
+function random($length, $numeric = 0) {
     $seed = base_convert(md5(microtime() . $_SERVER['DOCUMENT_ROOT']), 16, $numeric ? 10 : 35);
     $seed = $numeric ? (str_replace('0', '', $seed) . '012340567890') : ($seed . 'zZ' . strtoupper($seed));
     $hash = '';

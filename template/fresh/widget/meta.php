@@ -1,5 +1,5 @@
 <?php
-if(!defined('IN_KKFRAME')) exit();
+if (!defined('IN_KKFRAME')) exit();
 ?>
 <meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
 <meta name="HandheldFriendly" content="true" />

@@ -1,5 +1,5 @@
 <?php
-if(!defined('IN_KKFRAME')) exit('Access Denied');
+if (!defined('IN_KKFRAME')) exit('Access Denied');
 
 DB::query("ALTER TABLE `member` MODIFY `password` VARCHAR(255)");
 DB::query("UPDATE `setting` SET `k`='jquery_mode', `v`='builtin' WHERE (`k`='jquery_mode')");

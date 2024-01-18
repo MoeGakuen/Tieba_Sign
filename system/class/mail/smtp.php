@@ -6,17 +6,17 @@ class smtp extends mailer {
     var $name = 'SMTP - Socket';
     var $description = '通过 Socket 连接 SMTP 服务器发邮件 - Vrsion: v2.0';
     var $config = array(
-        array('SMTP 服务器地址', 'server', '', '') ,
-        array('SMTP 服务器端口', 'port', '', '465', 'number') ,
-        array('SMTP 用户名', 'name', '', '') ,
-		array('SMTP 密码', 'pass', '', '', 'password') ,
-		array('发送者名称', 'fromname', '', '贴吧签到助手'),
-		array('发送者邮箱', 'address', '一般与用户名一致', '', 'email')
-	);
+        array('SMTP 服务器地址', 'server', '', ''),
+        array('SMTP 服务器端口', 'port', '', '465', 'number'),
+        array('SMTP 用户名', 'name', '', ''),
+        array('SMTP 密码', 'pass', '', '', 'password'),
+        array('发送者名称', 'fromname', '', '贴吧签到助手'),
+        array('发送者邮箱', 'address', '一般与用户名一致', '', 'email')
+    );
 
     function isAvailable() {
         return !isset($_SERVER['HTTP_APPVERSION']) && $_SERVER['USER'] != 'bae';
-	}
+    }
 
     function send($mail) {
         $smtp = new _smtp($this);
@@ -52,7 +52,7 @@ class _smtp {
     // misc
     protected $charset = 'UTF-8';
     protected $newline = "\r\n";
-	protected $encoding = '7bit';
+    protected $encoding = '7bit';
 
     public function __construct($obj) {
         $this->smtpServer = $obj->_get_setting('server');
@@ -62,9 +62,9 @@ class _smtp {
         $this->smtpName = $obj->_get_setting('name');
         $this->smtpPass = $obj->_get_setting('pass');
         $this->fromname = $obj->_get_setting('fromname');
-		$this->address = $obj->_get_setting('address');
-		$this->from();
-	}
+        $this->address = $obj->_get_setting('address');
+        $this->from();
+    }
 
     public function from() {
         $this->from = array(
@@ -78,29 +78,29 @@ class _smtp {
             'email' => $email,
             'name' => $name
         );
-	}
+    }
 
     public function cc($email, $name = null) {
         $this->cc[] = array(
             'email' => $email,
             'name' => $name
         );
-	}
+    }
 
     public function bcc($email, $name = null) {
         $this->bcc[] = array(
             'email' => $email,
             'name' => $name
         );
-	}
+    }
 
     public function subject($subject) {
         $this->subject = $subject;
-	}
+    }
 
     public function message($html) {
         $this->message = $html;
-	}
+    }
 
     public function send() {
         if ($this->smtp_connect()) {
@@ -114,7 +114,7 @@ class _smtp {
         }
         $this->smtp_disconnect();
         return $result;
-	}
+    }
 
     protected function smtp_connect() {
         if ($this->secure === 'ssl') $this->smtpServer = 'ssl://' . $this->smtpServer;
@@ -138,7 +138,7 @@ class _smtp {
             if ($this->code() !== 235) return false;
         }
         return true;
-	}
+    }
 
     protected function smtp_deliver() {
         $this->request('MAIL FROM: <' . $this->from['email'] . '>' . $this->newline);
@@ -156,7 +156,7 @@ class _smtp {
         } else {
             return false;
         }
-	}
+    }
 
     protected function smtp_construct() {
         $boundary = md5(uniqid(time()));
@@ -166,14 +166,14 @@ class _smtp {
 
         if (!empty($this->to)) {
             $string = '';
-            foreach ($this->to as $r) $string.= $this->format($r) . ', ';
+            foreach ($this->to as $r) $string .= $this->format($r) . ', ';
             $string = substr($string, 0, -2);
             $headers[] = 'To: ' . $string;
         }
 
         if (!empty($this->cc)) {
             $string = '';
-            foreach ($this->cc as $r) $string.= $this->format($r) . ', ';
+            foreach ($this->cc as $r) $string .= $this->format($r) . ', ';
             $string = substr($string, 0, -2);
             $headers[] = 'CC: ' . $string;
         }
@@ -190,40 +190,40 @@ class _smtp {
         $headers[] = $this->message;
         $headers[] = '--' . $boundary;
 
-        $headers[sizeof($headers) - 1].= '--';
+        $headers[sizeof($headers) - 1] .= '--';
         $headers[] = '.';
 
         $email = '';
         foreach ($headers as $header) {
-            $email.= $header . $this->newline;
+            $email .= $header . $this->newline;
         }
         return $email;
-	}
+    }
 
     protected function smtp_disconnect() {
         $this->request('QUIT' . $this->newline);
         $this->response();
         fclose($this->connection);
-	}
+    }
 
     protected function code() {
         return (int)substr($this->response(), 0, 3);
-	}
+    }
 
     protected function request($string) {
         if ($this->debug_mode) echo '<code><strong>' . $string . '</strong></code><br/>';
         fputs($this->connection, $string);
-	}
+    }
 
     protected function response() {
         $response = '';
         while ($str = fgets($this->connection, 4096)) {
-            $response.= $str;
+            $response .= $str;
             if (substr($str, 3, 1) === ' ') break;
         }
         if ($this->debug_mode) echo '<code>' . $response . '</code><br/>';
         return $response;
-	}
+    }
 
     protected function format($recipient) {
         // 格式 "name <email>"
@@ -232,7 +232,7 @@ class _smtp {
         } else {
             return '<' . $recipient['email'] . '>';
         }
-	}
+    }
 
     public function __destruct() {
         if (is_resource($this->connection)) smtp_disconnect();

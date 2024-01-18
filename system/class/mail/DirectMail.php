@@ -1,8 +1,7 @@
 <?php
 if (!defined('IN_KKFRAME')) exit('Access Denied');
 
-class DirectMail extends mailer
-{
+class DirectMail extends mailer {
     var $id = 'DirectMail';
     var $name = 'DirectMail';
     var $description = '通过阿里云邮件推送，无需 SMTP 支持 - Vrsion: v1.0.0';
@@ -13,13 +12,11 @@ class DirectMail extends mailer
         array('发件人昵称', 'alias', '', '学园云签到', '')
     );
 
-    function isAvailable()
-    {
+    function isAvailable() {
         return function_exists('curl_init');
     }
 
-    function post($data)
-    {
+    function post($data) {
         $ch = curl_init();
         curl_setopt($ch, CURLOPT_URL, 'http://dm.aliyuncs.com/');
         curl_setopt($ch, CURLOPT_HEADER, 0);
@@ -37,8 +34,7 @@ class DirectMail extends mailer
         return $result;
     }
 
-    function computeSignature($parameters, $accessKeySecret)
-    {
+    function computeSignature($parameters, $accessKeySecret) {
         ksort($parameters);
         $canonicalizedQueryString = '';
         foreach ($parameters as $key => $value) {
@@ -50,8 +46,7 @@ class DirectMail extends mailer
         return $signature;
     }
 
-    function percentEncode($str)
-    {
+    function percentEncode($str) {
         $res = urlencode($str);
         $res = preg_replace('/\+/', '%20', $res);
         $res = preg_replace('/\*/', '%2A', $res);
@@ -59,8 +54,7 @@ class DirectMail extends mailer
         return $res;
     }
 
-    function prepareValue($value)
-    {
+    function prepareValue($value) {
         if (is_bool($value)) {
             if ($value) {
                 return "true";
@@ -72,15 +66,14 @@ class DirectMail extends mailer
         }
     }
 
-    function send($mail)
-    {
-        $AccessKeyId=$this->_get_setting('accessKey');
-        $accessSecret=$this->_get_setting('accessSecret');
-        $AccountName=$this->_get_setting('accountName');
-        $ToAddress= $mail->address;
-        $FromAlias= $this->_get_setting('alias');
-        $Subject= $mail->subject;
-        $HtmlBody= $mail->message;
+    function send($mail) {
+        $AccessKeyId = $this->_get_setting('accessKey');
+        $accessSecret = $this->_get_setting('accessSecret');
+        $AccountName = $this->_get_setting('accountName');
+        $ToAddress = $mail->address;
+        $FromAlias = $this->_get_setting('alias');
+        $Subject = $mail->subject;
+        $HtmlBody = $mail->message;
         $apiParams = array();
         foreach ($apiParams as $key => $value) {
             $apiParams[$key] = $this->prepareValue($value);
@@ -96,15 +89,13 @@ class DirectMail extends mailer
         $apiParams["AccountName"] = $AccountName;
         $apiParams["ReplyToAddress"] = 'true';
         $apiParams["AddressType"] = 1;
-        $apiParams["ToAddress"] =$ToAddress;
-        $apiParams["FromAlias"] =$FromAlias ;
+        $apiParams["ToAddress"] = $ToAddress;
+        $apiParams["FromAlias"] = $FromAlias;
         $apiParams["Subject"] =  $Subject;
         $apiParams["HtmlBody"] = $HtmlBody;
         $apiParams["Signature"] = $this->computeSignature($apiParams, $accessSecret);
-        $sendresult = json_decode($this -> post($apiParams), true);
-        if ($sendresult['err_no']==0) return true;
+        $sendresult = json_decode($this->post($apiParams), true);
+        if ($sendresult['err_no'] == 0) return true;
         return false;
     }
 }
-
-?>

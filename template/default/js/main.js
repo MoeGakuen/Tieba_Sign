@@ -73,7 +73,7 @@ $(document).ready(function() {
 var guide_viewed = false;
 var stat = [];
 if (typeof defered_js == 'undefined') var defered_js = new Array;
-stat[0] = stat[1] = stat[2] = stat[3] = stat[4] = 0;
+stat[0] = stat[1] = stat[5] = stat[127] = stat[-1] = 0;
 var new_version = false;
 
 function load_liked_tieba(){
@@ -129,20 +129,20 @@ function load_sign_history(date){
 }
 
 function show_sign_log(result){
-	stat[0] = stat[1] = stat[2] = stat[3] = stat[4] = 0;
+	stat[0] = stat[1] = stat[5] = stat[127] = stat[-1] = 0;
 	if(!result || result.count == 0) return;
 	$('#content-sign_log table tbody').html('');
 	$('#content-sign_log h2').html(result.date+" 签到记录");
 	$.each(result.log, function(i, field){
-		$("#content-sign_log table tbody").append("<tr><td>"+(i+1)+"</td><td><a href=\"http://tieba.baidu.com/f?kw="+field.unicode_name+"\" target=\"_blank\">"+field.name+"</a></td><td>"+_status(field.status)+"</td><td>"+_exp(field.exp)+"</td></tr>");
+		$("#content-sign_log table tbody").append("<tr><td>"+(i+1)+"</td><td><a href=\"http://tieba.baidu.com/f?kw="+field.unicode_name+"\" target=\"_blank\">"+field.name+"</a></td><td>"+_status(field.status, field.lastErr)+"</td><td>"+_exp(field.exp)+"</td></tr>");
 	});
 	var result_text = "";
-	result_text += "共计 "+(stat[0] + stat[1] + stat[2] + stat[3] + stat[4])+" 个贴吧";
-	result_text += ", 成功签到 "+(stat[4])+" 个贴吧";
-	if(stat[2]) result_text += ", 有 "+(stat[2])+" 个贴吧尚未签到";
-	if(stat[0]) result_text += ", 已跳过 "+(stat[0])+" 个贴吧";
-	if(stat[3]) result_text += ", "+(stat[3])+" 个贴吧正在等待重试";
-	if(stat[1]) result_text += ", "+(stat[1])+" 个贴吧无法签到, <a href=\"index.php?action=reset_failure&formhash="+formhash+"\" onclick=\"return msg_redirect_action(this.href)\">点此重置无法签到的贴吧</a>";
+	result_text += "共计 "+(stat[0] + stat[1] + stat[5] + stat[127] + stat[-1])+" 个贴吧";
+	result_text += ", 成功签到 "+(stat[1])+" 个贴吧";
+	if(stat[0]) result_text += ", 有 "+(stat[0])+" 个贴吧尚未签到";
+	if(stat[5]) result_text += ", 已跳过 "+(stat[5])+" 个贴吧";
+	if(stat[-1]) result_text += ", "+(stat[-1])+" 个贴吧正在等待重试";
+	if(stat[127]) result_text += ", "+(stat[127])+" 个贴吧无法签到, <a href=\"index.php?action=reset_failure&formhash="+formhash+"\" onclick=\"return msg_redirect_action(this.href)\">点此重置无法签到的贴吧</a>";
 	$('#sign-stat').html(result_text);
 	var pager_text = '';
 	if(result.before_date) pager_text += '<a href="#history-'+result.before_date+'">&laquo; 前一天</a> &nbsp; ';
@@ -199,33 +199,38 @@ function load_baidu_bind(){
 function _status(status){
 	if(typeof status == 'undefined') status = 0;
 	status = parseInt(status);
-	stat[ (status+2) ]++;
-	if(isMobile()){
-		switch(status){
-            case -2:
-                return '<img src="template/default/style/warn.png" />';
-            case -1:
-                return '<img src="template/default/style/error.gif" />';
-            case 0:
-                return '<img src="template/default/style/retry.gif" />';
-            case 1:
-                return '<img src="template/default/style/warn.png" />';
-            case 2:
-                return '<img src="template/default/style/done.gif" />';
-		}
-	}else{
-		switch(status){
-            case -2:
-                return '跳过签到';
-            case -1:
-                return '无法签到';
-            case 0:
-                return '待签到';
-            case 1:
-                return '签到失败';
-            case 2:
-                return '已签到';
-		}
+	var errMsg = arguments[1] ? arguments[1] : '未知错误';
+
+	switch(status){
+		case 0:
+			stat[0]++;
+			return isMobile() ? '<img src="template/default/style/retry.gif">' : '待签到';
+
+		case 1:
+		case 2:
+			stat[1]++;
+			return isMobile() ? '<img src="template/default/style/done.gif">' : '已签到';
+			
+		case 3:
+		case 4:
+			stat[1]++;
+			return isMobile() ? '<img src="template/default/style/done.gif">' : '<a href="javascript:;" onclick="sign_alert(\'' + errMsg + '\')">已签到 (封禁)</a>';
+
+		case 5:
+			stat[5]++;
+			return isMobile() ? '<img src="template/default/style/retry.gif">' : '跳过签到';
+
+		case 10:
+		case 11:
+		case 12:
+		case 13:
+		case 127:
+			stat[127]++;
+			return isMobile() ? '<img src="template/default/style/error.gif">' : '<a href="javascript:;" onclick="sign_alert(\'' + errMsg + '\')">无法签到</a>';
+
+		default:
+			stat[-1]++;
+			return isMobile() ? '<img src="template/default/style/warn.png">' : '<a href="javascript:;" onclick="sign_alert(\'' + errMsg + '\')">签到失败</a>';
 	}
 }
 
@@ -297,4 +302,8 @@ function loadTiebaAutoComplete(){
 	for(var i=0; i<tieba.length; i++){
 		$('#autocomplete-tieba').append('<option value="'+tieba[i].replace('"', "&quot;")+'">');
 	}
+}
+
+function sign_alert(str) {
+    createWindow().setTitle('提示').setContent(str).addCloseButton('确定').append();
 }
