@@ -117,6 +117,7 @@ CREATE TABLE IF NOT EXISTS `sign_log` (
   `status` tinyint(4) NOT NULL DEFAULT '0',
   `exp` tinyint(4) NOT NULL DEFAULT '0',
   `retry` tinyint(3) unsigned NOT NULL DEFAULT '0',
+  `lastErr` text NOT NULL DEFAULT '',
   UNIQUE KEY `tid` (`tid`,`date`),
   KEY `uid` (`uid`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;

@@ -13,11 +13,11 @@ if ($nowtime - $today < 1800) {
     while ($endtime > time()) {
         if ($count <= 0) break;
         $offset = $random_sign ? rand(1, $count) - 1 : 0;
-        $res = DB::fetch_first("SELECT uid, tid, `status` FROM sign_log WHERE `date` = {$date} AND `status` <= 0 ORDER BY uid LIMIT {$offset},1");
+        $res = DB::fetch_first("SELECT `uid`, `tid`, `status` FROM `sign_log` WHERE `date` = {$date} AND `status` <= 0 ORDER BY `uid` LIMIT {$offset},1");
         if (empty($res['tid'])) continue;
-        $tieba = DB::fetch_first("SELECT * FROM my_tieba WHERE tid = {$res['tid']}");
+        $tieba = DB::fetch_first("SELECT * FROM `my_tieba` WHERE `tid` = {$res['tid']}");
         if (!empty($tieba['skiped'])) {
-            DB::query("UPDATE sign_log SET `status` = 5, lastErr = '用户手动忽略' WHERE tid = {$res['tid']} AND `date` = {$date}");
+            DB::query("UPDATE `sign_log` SET `status` = 5, `lastErr` = '用户手动忽略' WHERE `tid` = {$res['tid']} AND `date` = {$date}");
             continue;
         }
         list($status, $result, $exp) = client_sign($tieba['uid'], $tieba);
@@ -29,34 +29,34 @@ if ($nowtime - $today < 1800) {
             case 10:  // Cookie 为空
             case 11:  // 找不到 BDUSS
             case 12:  // BDUSS 无效
-                DB::query("UPDATE sign_log SET `status` = {$status}, lastErr = '{$result}' WHERE uid = {$res['uid']} AND `date` = {$date}");
+                DB::query("UPDATE `sign_log` SET `status` = {$status}, `lastErr` = '{$result}' WHERE `uid` = {$res['uid']} AND `date` = {$date}");
                 $success = false;
                 break;
 
             case 13:  // 贴吧不开放
-                DB::query("UPDATE sign_log SET `status` = {$status}, lastErr = '{$result}' WHERE tid = {$res['tid']} AND `date` = {$date}");
+                DB::query("UPDATE `sign_log` SET `status` = {$status}, `lastErr` = '{$result}' WHERE `tid` = {$res['tid']} AND `date` = {$date}");
                 $success = false;
                 break;
 
             case 1: // 签到成功
-                DB::query("UPDATE sign_log SET `status` = 1, exp = {$exp}, lastErr = '' WHERE tid = {$res['tid']} AND `date` = {$date}");
+                DB::query("UPDATE `sign_log` SET `status` = 1, `exp` = {$exp}, `lastErr` = '' WHERE `tid` = {$res['tid']} AND `date` = {$date}");
                 $success = true;
                 break;
 
             case 2:  // 重复签到
-                DB::query("UPDATE sign_log SET `status` = {$status}, lastErr = '' WHERE tid = {$res['tid']} AND `date` = {$date}");
+                DB::query("UPDATE `sign_log` SET `status` = {$status}, `lastErr` = '' WHERE `tid` = {$res['tid']} AND `date` = {$date}");
                 $success = true;
                 break;
 
             case 6:  // 账号被吧务封禁，无法签到
-                DB::query("UPDATE sign_log SET `status` = {$status}, lastErr = '{$result}' WHERE tid = {$res['tid']} AND `date` = {$date}");
+                DB::query("UPDATE `sign_log` SET `status` = {$status}, `lastErr` = '{$result}' WHERE `tid` = {$res['tid']} AND `date` = {$date}");
                 $success = true;
                 break;
 
             default:  // 其它错误，待重试
-                DB::query("UPDATE sign_log SET `status` = {$status}, retry = retry + 1, lastErr = '{$result}' WHERE tid = {$res['tid']} AND `date` = {$date}");
-                $retry = DB::result_first("SELECT retry FROM sign_log WHERE tid = {$tieba['tid']} AND `date` = {$date} AND `status` < 0");
-                if ($retry >= 5) DB::query("UPDATE sign_log SET `status` = 127 WHERE tid = {$res['tid']} AND `date` = {$date}");
+                DB::query("UPDATE `sign_log` SET `status` = {$status}, `retry` = `retry` + 1, `lastErr` = '{$result}' WHERE `tid` = {$res['tid']} AND `date` = {$date}");
+                $retry = DB::result_first("SELECT `retry` FROM `sign_log` WHERE `tid` = {$tieba['tid']} AND `date` = {$date} AND `status` < 0");
+                if ($retry >= 5) DB::query("UPDATE `sign_log` SET `status` = 127 WHERE `tid` = {$res['tid']} AND `date` = {$date}");
                 $success = false;
         }
 

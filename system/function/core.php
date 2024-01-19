@@ -156,7 +156,7 @@ function showmessage($msg = '', $redirect = '', $delay = 3) {
         exit();
     } else {
         $delay = $delay * 1000;
-        $redirect = ($redirect === '-1') ? 'history.back()' : "window.location.href = '{$redirect}'";
+        $redirect = ($redirect == '-1') ? 'history.back()' : "window.location.href = '{$redirect}'";
         $redirect = "javascript:{$redirect}";
     }
     include template('message');

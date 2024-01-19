@@ -8,10 +8,10 @@ if ($_GET['action'] == 'logout' && $_GET['hash'] == $formhash) {
 } elseif ($uid && $_GET['action'] == 'unbind_user') {
     if ($_GET['formhash'] != $formhash) showmessage('来源不可信，请重试', './');
     $_uid = intval($_GET['uid']);
-    $user = DB::fetch_first("SELECT * FROM member_bind WHERE uid='{$uid}' AND _uid='{$_uid}'");
+    $user = DB::fetch_first("SELECT * FROM `member_bind` WHERE `uid` = {$uid} AND `_uid` = {$_uid}");
     if (!$user) showmessage('你并没有绑定该账号', './');
-    DB::query("DELETE FROM member_bind WHERE uid='{$uid}' AND _uid='{$_uid}'");
-    DB::query("DELETE FROM member_bind WHERE uid='{$_uid}' AND _uid='{$uid}'");
+    DB::query("DELETE FROM `member_bind` WHERE `uid` = {$uid} AND `_uid` = {$_uid}");
+    DB::query("DELETE FROM `member_bind` WHERE `uid` = {$_uid} AND `_uid` = {$uid}");
     showmessage("成功解除与 {$user['username']} 的绑定！", './');
 } elseif ($uid && $_GET['action'] == 'bind_user') {
     if ($_POST['formhash'] != $formhash) showmessage('来源不可信，请重试', './');
@@ -22,21 +22,21 @@ if ($_GET['action'] == 'logout' && $_GET['hash'] == $formhash) {
     }
     $_username = daddslashes($_POST['username']);
     if ($_username == $username) showmessage('请输入其他账户的信息', './#');
-    if (strlen($_username) > 24) showmessage('用户名过长，请修改', dreferer(), 5);
-    $user = DB::fetch_first("SELECT * FROM member WHERE username='{$_username}'");
+    if (strlen($_username) > 24) showmessage('用户名过长，请修改', -1, 5);
+    $user = DB::fetch_first("SELECT * FROM `member` WHERE `username` = '{$_username}'");
     $userid = $user['uid'];
     $verified = Widget_Password::verify($user, $_POST['password']);
     if ($verified) {
-        $exists = DB::result_first("SELECT _uid FROM member_bind WHERE uid='{$uid}' AND _uid='{$userid}'");
+        $exists = DB::result_first("SELECT `_uid` FROM `member_bind` WHERE `uid` = {$uid} AND `_uid` = {$userid}");
         if ($exists) showmessage('您此前已经绑定过此帐号', './#');
         DB::insert('member_bind', array(
             'uid' => $uid,
             '_uid' => $userid,
             'username' => $user['username'],
         ));
-        $exists = DB::result_first("SELECT uid FROM member_bind WHERE _uid='{$uid}' AND uid='{$userid}'");
+        $exists = DB::result_first("SELECT `uid` FROM `member_bind` WHERE `_uid` = {$uid} AND `uid` = {$userid}");
         if (!$exists) {
-            $username = DB::result_first("SELECT username FROM member WHERE uid='{$uid}'");
+            $username = DB::result_first("SELECT `username` FROM `member` WHERE `uid` = {$uid}");
             DB::insert('member_bind', array(
                 'uid' => $userid,
                 '_uid' => $uid,
@@ -50,7 +50,7 @@ if ($_GET['action'] == 'logout' && $_GET['hash'] == $formhash) {
 } elseif ($uid && $_GET['action'] == 'switch') {
     if ($_GET['formhash'] != $formhash) showmessage('来源不可信，请重试', './');
     $target_uid = intval($_GET['uid']);
-    $uid = DB::result_first("SELECT _uid FROM member_bind WHERE uid='{$uid}' AND _uid='{$target_uid}'");
+    $uid = DB::result_first("SELECT `_uid` FROM `member_bind` WHERE `uid` = {$uid} AND `_uid` = {$target_uid}");
     if (!$uid) showmessage('您尚未绑定该账号，无法进行切换', './');
     $username = get_username($uid);
     do_login($uid);
@@ -63,17 +63,17 @@ if ($_GET['action'] == 'logout' && $_GET['hash'] == $formhash) {
         if (!$str) showmessage('链接有误，请重新获取', './');
         list($uid, $exptime, $password, $random) = explode("\t", $str);
         if ($exptime < TIMESTAMP) showmessage('链接已过期，请重新获取', './');
-        $user = DB::fetch_first("SELECT * FROM member WHERE uid='{$uid}' AND password='{$password}'");
+        $user = DB::fetch_first("SELECT * FROM `member` WHERE `uid` = {$uid} AND `password` = '{$password}'");
         if (!$user) showmessage('链接已经失效，请重新获取', './');
         $new_password = random(10);
         $newpassword = Widget_Password::encrypt($user, $new_password);
-        DB::update('member', array('password' => $newpassword), "uid='{$uid}'");
+        DB::update('member', array('password' => $newpassword), "`uid` = {$uid}");
         showmessage("您的密码已经重置为：<br>{$new_password}<br><br>请使用新密码登录并修改密码。");
     } elseif ($_POST['username'] && $_POST['email']) {
         $username = daddslashes($_POST['username']);
         $email = daddslashes($_POST['email']);
-        $user = DB::fetch_first("SELECT * FROM member WHERE username='{$username}' AND email='{$email}'");
-        if (!$user) showmessage('用户名 / 邮箱有误', './');
+        $user = DB::fetch_first("SELECT * FROM `member` WHERE `username` = '{$username}' AND `email` = '{$email}'");
+        if (!$user) showmessage('用户名 / 邮箱有误', '-1');
         $info = array(
             $user['uid'],            // UID
             TIMESTAMP + 3600,        // Token 过期时间
@@ -100,13 +100,13 @@ EOF;
     header('Location: member.php');
     exit();
 } elseif ($_GET['action'] == 'register') {
-    if (getSetting('block_register')) showmessage('抱歉，当前站点禁止新用户注册', 'member.php');
+    if (getSetting('block_register')) showmessage('抱歉，当前站点禁止新用户注册', -1);
     $count = DB::result_first('SELECT COUNT(*) FROM member');
     if ($_POST && strexists($_SERVER['HTTP_REFERER'], 'member.php')) {
         list($time, $hash, $member_count) = explode("\t", authcode($_COOKIE['key'], 'DECODE'));
         if (getSetting('register_check') && $time > TIMESTAMP - 5 || $time < TIMESTAMP - 300) $_POST = array();
-        if (getSetting('register_limit') && $member_count != $count) showmessage('当前注册人数过多，请您稍后再试', 'member.php');
-        if ($count > 1000) showmessage('超过当前站点最大用户数量上限，无法注册', 'member.php');
+        if (getSetting('register_limit') && $member_count != $count) showmessage('当前注册人数过多，请您稍后再试', -1);
+        if ($count > 1000) showmessage('超过当前站点最大用户数量上限，无法注册', -1);
         $_POST['username'] = $_POST['password'] = $_POST['email'] = null;
         foreach ($_POST as $key => $value) {
             $key = authcode($key, 'DECODE', $hash);
@@ -119,24 +119,26 @@ EOF;
             }
         }
         if (!$_POST['username']) {
-            showmessage('请输入用户名', 'member.php');
+            showmessage('请输入用户名', -1);
         } elseif (!$_POST['password']) {
-            showmessage('请输入密码', 'member.php');
+            showmessage('请输入密码', -1);
         } elseif (!$_POST['email']) {
-            showmessage('请输入您的邮箱', 'member.php');
+            showmessage('请输入您的邮箱', -1);
         } else {
-            if ($invite_code && $_POST['invite_code'] != $invite_code) showmessage('邀请码有误', 'member.php');
+            if ($invite_code && $_POST['invite_code'] != $invite_code) showmessage('邀请码有误', -1);
             $username = daddslashes($_POST['username']);
             $email = daddslashes($_POST['email']);
-            if (!is_email($email)) showmessage('邮箱格式不正确，请修改', dreferer(), 5);
-            if (!$username || !$_POST['password'] || !$email) showmessage('您输入的信息不完整', 'member.php');
-            if (preg_match('/[<>\'\\"]/i', $username)) showmessage('用户名中有被禁止使用的关键字', 'member.php');
-            if (strlen($username) < 6) showmessage('用户名至少要6个字符(即2个中文 或 6个英文)，请修改', dreferer(), 5);
-            if (strlen($username) > 24) showmessage('用户名过长，请修改', dreferer(), 5);
+            if (!is_email($email)) showmessage('邮箱格式不正确，请修改', -1, 5);
+            if (!$username || !$_POST['password'] || !$email) showmessage('您输入的信息不完整', -1);
+            if (preg_match('/[<>\'\\"]/i', $username)) showmessage('用户名中有被禁止使用的关键字', -1);
+            if (strlen($username) < 6) showmessage('用户名至少要6个字符(即2个中文 或 6个英文)，请修改', -1, 5);
+            if (strlen($username) > 24) showmessage('用户名过长，请修改', -1, 5);
             $un = strtolower($username);
-            if (strexists($un, 'admin') || strexists($un, 'guanli')) showmessage('用户名不和谐，请修改', dreferer(), 5);
+            if (strexists($un, 'admin') || strexists($un, 'guanli')) showmessage('用户名不和谐，请修改', -1, 5);
             $user = DB::fetch_first("SELECT * FROM member WHERE username='{$username}'");
-            if ($user) showmessage('用户名已经存在', 'member.php');
+            if ($user) showmessage('用户名已经存在', -1);
+            $user_email = DB::fetch_first("SELECT * FROM member WHERE email='{$email}'");
+            if ($user_email) showmessage('邮箱已被使用', -1);
             HOOK::run('before_register');
             $uid = do_register($username, $_POST['password'], $email);
             do_login($uid);
@@ -159,7 +161,7 @@ EOF;
             $username = $user['username'];
             showmessage("欢迎回来，{$username}！", dreferer(), 1);
         } else {
-            showmessage('对不起，您的用户名或密码错误，无法登录.', 'member.php', 3);
+            showmessage('对不起，您的用户名或密码错误，无法登录.', -1, 3);
         }
     }
 }

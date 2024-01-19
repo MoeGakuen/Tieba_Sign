@@ -106,7 +106,11 @@ class core {
             $_mail->subject = $mail['subject'];
             $_mail->message = $mail['content'];
             $sender = new mail_sender();
-            $sender->sendMail($_mail);
+            if ($sender->sendMail($_mail)) {
+                echo '[Mail.Queue.Send] Success';
+            } else {
+                echo '[Mail.Queue.Send] Failed';
+            }
         } else {
             saveSetting('mail_queue', 0);
         }
