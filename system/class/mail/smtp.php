@@ -11,7 +11,8 @@ class smtp extends mailer {
         array('SMTP 用户名', 'name', '', ''),
         array('SMTP 密码', 'pass', '', '', 'password'),
         array('发送者名称', 'fromname', '', '贴吧签到助手'),
-        array('发送者邮箱', 'address', '一般与用户名一致', '', 'email')
+        array('发送者邮箱', 'address', '一般与用户名一致', '', 'email'),
+        array('DKIM 标识符', 'selector', 'DMKI 公钥子域', '', '')
     );
 
     function isAvailable() {
@@ -49,6 +50,8 @@ class _smtp {
     protected $from; // 发送人
     protected $message; // 内容
     protected $subject; // 标题
+    protected $dkimSelector; // DKIM 公钥子域
+    protected $domain; // 邮件域名
     // misc
     protected $charset = 'UTF-8';
     protected $newline = "\r\n";
@@ -63,6 +66,8 @@ class _smtp {
         $this->smtpPass = $obj->_get_setting('pass');
         $this->fromname = $obj->_get_setting('fromname');
         $this->address = $obj->_get_setting('address');
+        $this->dkimSelector = $obj->_get_setting('selector');
+        $this->domain = end(explode('@', $this->address));
         $this->from();
     }
 
@@ -163,6 +168,13 @@ class _smtp {
         $headers[] = 'From: ' . $this->format($this->from);
         $headers[] = 'Subject: ' . $this->subject;
         $headers[] = 'Date: ' . date('r');
+
+        $msgId = random(8) . '-' . random(4) . '-' . random(4) . '-' . random(4) . '-' . random(12);
+        $headers[] = "Message-ID: <{$msgId}@{$this->domain}>";
+
+        if (!empty($this->dkimSelector)) {
+            $headers[] = "DKIM-Signature: v=1; a=rsa-sha256; d={$this->domain}; s={$this->dkimSelector}; c=relaxed/simple; q=dns/txt; t=" . time() . "; h=From : Subject : Date : Message-ID : MIME-Version : To : CC : Content-Type : Content-Transfer-Encoding; bh=" . base64_encode(hash('sha256', $this->message, true)) . "; b=";
+        }
 
         if (!empty($this->to)) {
             $string = '';

@@ -34,6 +34,7 @@ if ($nowtime - $today < 1800) {
                 break;
 
             case 13:  // 贴吧不开放
+                DB::query("UPDATE `my_tieba` SET `skiped` = 1 WHERE `tid` = {$res['tid']}");
                 DB::query("UPDATE `sign_log` SET `status` = {$status}, `lastErr` = '{$result}' WHERE `tid` = {$res['tid']} AND `date` = {$date}");
                 $success = false;
                 break;

@@ -294,7 +294,7 @@ function jquery_path() {
         case 'jsdelivr':
             return '//cdn.jsdelivr.net/jquery/1.12.4/jquery.min.js?version=' . VERSION;
         case 'lug-ustc':
-            return '//ajax.lug.ustc.edu.cn/ajax/libs/jquery/1.12.4/jquery.min.js?version=' . VERSION;
+            return '//ajax.proxy.ustclug.org/ajax/libs/jquery/1.12.4/jquery.min.js?version=' . VERSION;
         case 'builtin':
         default:
             return 'system/js/jquery.min.js?version=' . VERSION;

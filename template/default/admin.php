@@ -88,7 +88,7 @@ if (!defined('IN_ADMINCP')) exit();
                 <?php } else { ?>
                     <p>没有在云平台注册，请尝试刷新本页面</p>
                 <?php } ?>
-                <br>
+                <hr>
                 <form method="post" action="admin.php?action=save_setting" id="setting_form" onsubmit="return post_win(this.action, this.id)">
                     <input type="hidden" name="formhash" value="<?php echo $formhash; ?>">
                     <?php if (defined('AFENABLED')) { ?>
@@ -133,7 +133,7 @@ if (!defined('IN_ADMINCP')) exit();
                     <p>jQuery 加载方式:</p>
                     <p><label><input type="radio" name="jquery_mode" value="builtin" /> 使用程序自带的 jQuery 类库 (默认, 推荐)</label></p>
                     <p><label><input type="radio" name="jquery_mode" value="google" /> 从 Google API 提供的 CDN 加载</label></p>
-                    <p><label><input type="radio" name="jquery_mode" value="mircosoft" /> 从 Microsoft CDN 加载 (推荐)</label></p>
+                    <p><label><input type="radio" name="jquery_mode" value="microsoft" /> 从 Microsoft CDN 加载 (推荐)</label></p>
                     <p><label><input type="radio" name="jquery_mode" value="cloudflare" /> 从 CloudFlare 提供的 CDN 加载</label></p>
                     <p><label><input type="radio" name="jquery_mode" value="jsdelivr" /> 从 jsDelivr 提供的 CDN 加载</label></p>
                     <p><label><input type="radio" name="jquery_mode" value="lug-ustc" /> 从 中科大 Linux 用户协会 提供的 CDN 加载</label></p>
@@ -143,7 +143,7 @@ if (!defined('IN_ADMINCP')) exit();
                     <p><input type="text" id="extra_title" name="extra_title" placeholder="如：KK 后宫团专用版" /></p>
                     <p><input type="submit" value="保存设置" /></p>
                 </form>
-                <br>
+                <hr>
                 <p>邮件发送方式:</p>
                 <form method="post" action="admin.php?action=mail_setting" id="mail_setting" onsubmit="return post_win(this.action, this.id)">
                     <input type="hidden" name="formhash" value="<?php echo $formhash; ?>">
