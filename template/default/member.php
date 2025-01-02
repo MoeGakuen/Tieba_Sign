@@ -4,7 +4,7 @@ $extra_title = getSetting('extra_title');
 $title = $extra_title ? "用户中心 - 贴吧签到助手 - {$extra_title}" : '用户中心 - 贴吧签到助手';
 ?>
 <!DOCTYPE html>
-<html>
+<html lang="zh-CN">
 
 <head>
     <title><?php echo $title; ?></title>

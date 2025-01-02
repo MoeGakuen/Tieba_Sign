@@ -1,5 +1,5 @@
 #page_login {
-	background-image:url(background.jpg);
+	background-image:url(background.webp);
 	background-attachment:fixed;
 	background-repeat:no-repeat;
 	background-size:cover;
@@ -7,7 +7,7 @@
 	-webkit-background-size:cover;
 }
 #page_index {
-	background-image:url(background.jpg);
+	background-image:url(background.webp);
 	background-attachment:fixed;
 	background-repeat:no-repeat;
 	background-size:cover;

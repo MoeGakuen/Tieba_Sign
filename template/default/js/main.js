@@ -183,7 +183,7 @@ function load_baidu_bind(){
 			var avatar_img = '//gss0.bdstatic.com/6LZ1dD3d1sgCo2Kml5_Y_D3/sys/portrait/item/' + result.data.user_portrait;
 			$('#avatar_img').attr('src', avatar_img);
 			$('#avatar_img').removeClass('hidden');
-			$('.tab-binded div').append('<img src="' + avatar_img + '" class="float-left">');
+			$('.tab-binded div').append('<img alt="用户头像" src="' + avatar_img + '" class="float-left">');
 			$('.tab-binded div').append('<p>百度通行证：<a href="http://tieba.baidu.com/home/main?un=' + result.data.user_name_url + '" target="_blank">' + result.data.user_name_show + '</a></p>');
 			$('.tab-binded div').append('<p>安全手机：' + result.data.mobilephone + '</p>');
 			$('.tab-binded div').append('<p>安全邮箱：' + result.data.email + '</p>');
@@ -204,21 +204,21 @@ function _status(status){
 	switch(status){
 		case 0:
 			stat[0]++;
-			return isMobile() ? '<img src="template/default/style/retry.gif">' : '待签到';
+			return isMobile() ? '<img alt="待签到" src="template/default/style/retry.gif">' : '待签到';
 
 		case 1:
 		case 2:
 			stat[1]++;
-			return isMobile() ? '<img src="template/default/style/done.gif">' : '已签到';
+			return isMobile() ? '<img alt="已签到" src="template/default/style/done.gif">' : '已签到';
 			
 		case 3:
 		case 4:
 			stat[1]++;
-			return isMobile() ? '<img src="template/default/style/done.gif">' : '<a href="javascript:;" onclick="sign_alert(\'' + errMsg + '\')">已签到 (封禁)</a>';
+			return isMobile() ? '<img alt="已签到 (封禁)" src="template/default/style/done.gif">' : '<a href="javascript:;" onclick="sign_alert(\'' + errMsg + '\')">已签到 (封禁)</a>';
 
 		case 5:
 			stat[5]++;
-			return isMobile() ? '<img src="template/default/style/retry.gif">' : '跳过签到';
+			return isMobile() ? '<img alt="跳过签到" src="template/default/style/retry.gif">' : '跳过签到';
 
 		case 10:
 		case 11:
@@ -226,11 +226,11 @@ function _status(status){
 		case 13:
 		case 127:
 			stat[127]++;
-			return isMobile() ? '<img src="template/default/style/error.gif">' : '<a href="javascript:;" onclick="sign_alert(\'' + errMsg + '\')">无法签到</a>';
+			return isMobile() ? '<img alt="无法签到" src="template/default/style/error.gif">' : '<a href="javascript:;" onclick="sign_alert(\'' + errMsg + '\')">无法签到</a>';
 
 		default:
 			stat[-1]++;
-			return isMobile() ? '<img src="template/default/style/warn.png">' : '<a href="javascript:;" onclick="sign_alert(\'' + errMsg + '\')">签到失败</a>';
+			return isMobile() ? '<img alt="签到失败" src="template/default/style/warn.png">' : '<a href="javascript:;" onclick="sign_alert(\'' + errMsg + '\')">签到失败</a>';
 	}
 }
 

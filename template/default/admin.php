@@ -2,7 +2,7 @@
 if (!defined('IN_ADMINCP')) exit();
 ?>
 <!DOCTYPE html>
-<html>
+<html lang="zh-CN">
 
 <head>
     <title>管理中心 - 贴吧签到助手</title>

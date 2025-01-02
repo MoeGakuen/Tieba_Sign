@@ -60,6 +60,9 @@ $(document).ready(function() {
 		}, true);
 		return false;
 	});
+  $(document).on('input', 'input[name="name"]', function(){
+    $('input[name="address"]').val($(this).val());
+  });
 	$('.menubtn').click(function(){
 		$('.sidebar').fadeIn();
 		autohide_sidebar();

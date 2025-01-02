@@ -4,7 +4,7 @@ if (!defined('IN_KKFRAME')) exit('Access Denied');
 class smtp extends mailer {
     var $id = 'smtp';
     var $name = 'SMTP - Socket';
-    var $description = '通过 Socket 连接 SMTP 服务器发邮件 - Vrsion: v2.0';
+    var $description = '通过 Socket 连接 SMTP 服务器发邮件 - Vrsion: v2.1';
     var $config = array(
         array('SMTP 服务器地址', 'server', '', ''),
         array('SMTP 服务器端口', 'port', '', '465', 'number'),

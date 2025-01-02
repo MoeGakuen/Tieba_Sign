@@ -46,21 +46,11 @@ if (!defined('IN_KKFRAME')) exit();
     <div id="guide_page_3" class="hidden">
         <p>一切准备就绪~</p><br>
         <p>我们已经成功接收到你百度账号信息，自动签到已经准备就绪。</p>
-        <p>您可以点击 <a href="#setting">高级设置</a> 更改邮件设定，或更改其他附加设定。</p><br>
+        <p>您可以点击 <a href="#setting">高级设置</a> 更改邮件设定，或更改其他附加设定。</p>
+        <p>建议您<b>30</b>天后来更新您的百度账号<b>Cookie</b></p>
+        <br>
         <p>感谢您的使用！</p><br>
         <p>程序作者：kookxiang</p>
         <p>更新优化：Gakuen (<a href="http://gakuen.me" target="_blank">http://gakuen.me</a>)</p>
-        <p>建议您30天后来更新您的百度账号cookie
-            <script type="text/javascript">
-                var __qqClockShare = {
-                    content: "您的贴吧签到助手 http://<?php echo $_SERVER["HTTP_HOST"]; ?>/ 百度账号 Cookie 有失效风险，请重新登陆绑定！",
-                    time: "<?php echo date('Y-m-d H:m', time() + 30 * 24 * 3600); ?>",
-                    advance: 5,
-                    url: "http://<?php echo $_SERVER["HTTP_HOST"]; ?>/",
-                    icon: "2_1"
-                };
-                document.write('<a href="//qzs.qq.com/snsapp/app/bee/widget/open.htm#content=' + encodeURIComponent(__qqClockShare.content) + '&time=' + encodeURIComponent(__qqClockShare.time) + '&advance=' + __qqClockShare.advance + '&url=' + encodeURIComponent(__qqClockShare.url) + '" target="_blank"><img src="//i.gtimg.cn/snsapp/app/bee/widget/img/' + __qqClockShare.icon + '.png" style="border:0px;"/></a>');
-            </script>
-        </p>
     </div>
 </div>

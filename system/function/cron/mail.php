@@ -29,7 +29,7 @@ function sendmsg($user) {
     $query = DB::query("SELECT * FROM `sign_log` l LEFT JOIN `my_tieba` t ON t.`tid`=l.`tid` WHERE l.`uid`={$uid} AND l.`date` = {$date} ORDER BY l.`status` DESC, l.`tid` ASC");
     $i = 1;
     $message = <<<EOF
-<html><body>
+<html lang="zh-CN"><body>
 <style type="text/css">
 div.wrapper * { font: 12px "Microsoft YaHei", arial, helvetica, sans-serif; word-break: break-all; }
 div.wrapper a { color: #15c; text-decoration: none; }

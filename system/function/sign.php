@@ -102,10 +102,11 @@ function _update_liked_tieba($uid, $ignore_error = false, $allow_deletion = true
         }
     }
     $my_tieba = array();
-    $query = DB::query("SELECT name, fid, tid FROM my_tieba WHERE uid='{$uid}'");
+    $query = DB::query("SELECT `name`, fid, tid FROM `my_tieba` WHERE uid = '{$uid}'");
     while ($r = DB::fetch($query)) {
         $my_tieba[$r['name']] = $r;
     }
+    $tiebaInfo = array();
     foreach ($liked_tieba as $tieba) {
         if ($my_tieba[$tieba['name']]) {
             unset($my_tieba[$tieba['name']]);
@@ -117,6 +118,7 @@ function _update_liked_tieba($uid, $ignore_error = false, $allow_deletion = true
             ), true);
             continue;
         } else {
+            $tiebaInfo[] = "({$tieba['fid']}, '{$tieba['name']}', '{$tieba['uname']}')";
             DB::insert('my_tieba', array(
                 'uid' => $uid,
                 'fid' => $tieba['fid'],
@@ -126,7 +128,8 @@ function _update_liked_tieba($uid, $ignore_error = false, $allow_deletion = true
             $insert++;
         }
     }
-    DB::query("INSERT IGNORE INTO sign_log (tid, uid, `date`) SELECT tid, uid, '{$date}' FROM my_tieba");
+    if ($tiebaInfo) DB::query("INSERT IGNORE INTO `tieba_info` (`fid`, `name`, `uname`) VALUES " . implode(', ', $tiebaInfo), 'SILENT');
+    DB::query("INSERT IGNORE INTO `sign_log` (tid, uid, `date`) SELECT tid, uid, '{$date}' FROM `my_tieba`");
     if ($my_tieba && $allow_deletion) {
         $tieba_ids = array();
         foreach ($my_tieba as $tieba) {
@@ -134,8 +137,8 @@ function _update_liked_tieba($uid, $ignore_error = false, $allow_deletion = true
         }
         $str = "'" . implode("', '", $tieba_ids) . "'";
         $deleted = count($my_tieba);
-        DB::query("DELETE FROM my_tieba WHERE uid='{$uid}' AND tid IN ({$str})");
-        DB::query("DELETE FROM sign_log WHERE uid='{$uid}' AND tid IN ({$str})");
+        DB::query("DELETE FROM `my_tieba` WHERE uid = '{$uid}' AND tid IN ({$str})");
+        DB::query("DELETE FROM `sign_log` WHERE uid = '{$uid}' AND tid IN ({$str})");
     }
     return array($insert, $deleted);
 }

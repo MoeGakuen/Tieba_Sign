@@ -3,7 +3,7 @@ if (!defined('IN_KKFRAME')) exit();
 $url = stristr($_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'], 'plugins', true);
 ?>
 <!DOCTYPE html>
-<html>
+<html lang="zh-CN">
 <meta charset=utf-8>
 <title>系统消息</title>
 <meta name=viewport content="initial-scale=1, minimum-scale=1, width=device-width">
